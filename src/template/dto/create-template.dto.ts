@@ -1,1 +1,3 @@
-export class CreateTemplateDto {}
+export class CreateTemplateDto {
+  template_name: string;
+}
