@@ -25,21 +25,26 @@ export class TemplateController {
     return this.templateService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.templateService.findOne(+id);
+  @Get('/count')
+  count() {
+    return this.templateService.count();
   }
 
-  @Patch(':id')
+  @Get(':ref_id')
+  findOne(@Param('ref_id') ref_id: string) {
+    return this.templateService.findOne(ref_id);
+  }
+
+  @Patch(':ref_id')
   update(
-    @Param('id') id: string,
+    @Param('ref_id') ref_id: string,
     @Body() updateTemplateDto: UpdateTemplateDto,
   ) {
-    return this.templateService.update(+id, updateTemplateDto);
+    return this.templateService.update(ref_id, updateTemplateDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.templateService.remove(+id);
+  @Delete(':ref_id')
+  remove(@Param('ref_id') ref_id: string) {
+    return this.templateService.remove(ref_id);
   }
 }

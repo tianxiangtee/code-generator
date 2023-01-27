@@ -9,25 +9,43 @@ import { Template, TemplateSchema } from './entities/template.entity';
     MongooseModule.forFeatureAsync([
       {
         name: Template.name,
-        useFactory: () => {
-          const schema = TemplateSchema;
-          // schema.path('_id').set(function (newVal) {
-          //   console.log('newVal', newVal);
-          //   console.log('ori', this);
-          // });
-          schema.post('init', function () {
-            const temp = this.toObject();
-            console.log('ori', temp);
-          });
-          schema.pre<Template>('save', async function () {
-            console.log('pre save mongo');
-          });
-          return schema;
-        },
+        useFactory: () => factoryFunction(),
       },
     ]),
   ],
   controllers: [TemplateController],
   providers: [TemplateService],
 })
-export class TemplateModule { }
+export class TemplateModule {}
+
+function generateAudit(originalValue: any, newValue: Template) {
+  delete originalValue._id;
+  const jsonObject1 = originalValue;
+  const jsonObject2 = newValue;
+
+  const keys = Object.keys(jsonObject1);
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    if (jsonObject1[key] != jsonObject2[key]) {
+      console.log(
+        key +
+          " value changed from '" +
+          jsonObject1[key] +
+          "' to '" +
+          jsonObject2[key] +
+          "'",
+      );
+    }
+  }
+}
+function factoryFunction() {
+  const schema = TemplateSchema;
+  let originalValue = null;
+  schema.post('init', function () {
+    originalValue = this.toObject();
+  });
+  schema.pre<Template>('save', async function () {
+    if (originalValue != null) generateAudit(originalValue, this);
+  });
+  return schema;
+}

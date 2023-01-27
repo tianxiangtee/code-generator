@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { v4 as uuid } from 'uuid';
 @Injectable()
 export class MasterService<
   Model,
@@ -19,29 +19,43 @@ export class MasterService<
     this.advanceFilter = advanceFilter;
   }
 
-  create(
-    createDto: CreateDto,
-    cloneSourceRefId = null,
-    cloneSourceInfo = null,
-  ): Promise<Model> {
+  create(createDto: CreateDto): Promise<Model> {
     console.log('Create records');
-    const model = new this.currentModel({ ...createDto });
+    const model = new this.currentModel({ ...createDto, ref_id: uuid() });
     return model.save();
   }
 
-  findAll() {
-    return `This action returns all template`;
+  async findAll(filterDto: FilterDto = null): Promise<Model[]> {
+    console.log(`This action returns all template`);
+    if (filterDto == null)
+      return this.currentModel.find({}, { _id: 0, __v: 0 }).lean();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} template`;
+  async count(filterDto: FilterDto = null): Promise<Model[]> {
+    console.log(`This action count all template`);
+    if (filterDto == null) return this.currentModel.count();
   }
 
-  update(id: number, UpdateDto: UpdateDto) {
-    return `This action updates a #${id} template`;
+  async findOne(ref_id: string) {
+    console.log(`This action returns a #${ref_id} template`);
+    const record = await this.currentModel.findOne(
+      { ref_id },
+      { _id: 0, __v: 0 },
+    );
+    if (!record) throw new NotFoundException(ref_id);
+    return record;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} template`;
+  async update(ref_id: string, UpdateDto: UpdateDto) {
+    console.log(`This action updates a #${ref_id} template`);
+    let model = await this.currentModel.findOne({ ref_id });
+    model = Object.assign(model, UpdateDto);
+    return model.save();
+  }
+
+  remove(ref_id: string) {
+    console.log(`This action removes a #${ref_id} template`);
+    const result = this.currentModel.findOneAndDelete({ ref_id });
+    return result;
   }
 }
