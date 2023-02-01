@@ -10,7 +10,13 @@ import {
 import { TemplateService } from './template.service';
 import { CreateTemplateDto } from './dto/create-template.dto';
 import { UpdateTemplateDto } from './dto/update-template.dto';
+import { ApiHeader } from '@nestjs/swagger';
 
+@ApiHeader({
+  name: 'servicekey',
+  description: 'Service Key for API',
+  schema: { default: `${process.env.SERVICE_KEY}` },
+})
 @Controller('template')
 export class TemplateController {
   constructor(private readonly templateService: TemplateService) {}
