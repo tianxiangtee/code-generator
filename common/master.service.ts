@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
-import { generateAudit } from './audit/generateAudit';
+import { generateAudit, generateUpdateAudit } from './audit/generateAudit';
 import { CommonDto, CommonFilterDto } from './constant/common-dto';
 @Injectable()
 export class MasterService<
@@ -64,7 +64,17 @@ export class MasterService<
   async update(ref_id: string, UpdateDto: UpdateDto) {
     console.log(`This action updates a #${ref_id} template`);
     let model = await this.currentModel.findOne({ ref_id });
-    model = Object.assign(model, UpdateDto);
+    if (!model) throw new NotFoundException('Record not found');
+    const updatedModel = Object.assign({}, model._doc, UpdateDto);
+    const auditResult = generateUpdateAudit(model, updatedModel);
+    if (auditResult.changes.length > 0) {
+      const audit = new this.auditModel(auditResult);
+      audit.save();
+      model = Object.assign(model, UpdateDto);
+      model.updated_by = updatedModel.updated_by;
+      model.updated_by_name = updatedModel.updated_by_name;
+      model.updated_datetime_utc = updatedModel.updated_datetime_utc;
+    }
     return model.save();
   }
 

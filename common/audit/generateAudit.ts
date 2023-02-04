@@ -40,14 +40,32 @@ export function generateAudit(
   return audit;
 }
 
-type Change = {
-  fieldName: string;
-  oldValue: any;
-  newValue: any;
-};
+export function generateUpdateAudit(model, updatedModel) {
+  const oldDocument = model;
+  const newDocument = updatedModel;
 
-function identifyChanges(oldDoc: object, newDoc: object): Change[] {
-  const changes: Change[] = [];
+  console.log(oldDocument, newDocument);
+  if (oldDocument == null || newDocument == null) {
+    return;
+  }
+  const audit = generateAudit(newDocument, model.collection.name);
+  switch (newDocument.status) {
+    case ACTION_TYPE.REJECTED:
+    case ACTION_TYPE.SUBMITTED:
+    case ACTION_TYPE.REGISTERED: {
+      audit.action_type = newDocument.status;
+      break;
+    }
+    default:
+      audit.action_type = ACTION_TYPE.UPDATE;
+      break;
+  }
+  audit.changes = identifyChanges(oldDocument, newDocument);
+  return audit;
+}
+
+function identifyChanges(oldDoc: object, newDoc: object) {
+  const changes = [];
 
   for (const field in newDoc) {
     if (oldDoc[field] !== newDoc[field]) {
