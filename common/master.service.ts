@@ -1,13 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
+import { generateAudit } from './audit/generateAudit';
+import { CommonDto, CommonFilterDto } from './constant/common-dto';
 @Injectable()
 export class MasterService<
   Model,
   Audit,
-  CreateDto,
+  CreateDto extends CommonDto,
   UpdateDto,
-  FilterDto,
-  AuditFilterDto,
+  FilterDto extends CommonFilterDto,
+  AuditFilterDto extends CommonFilterDto,
 > {
   constructor(
     protected currentModel: any,
@@ -21,7 +23,20 @@ export class MasterService<
 
   create(createDto: CreateDto): Promise<Model> {
     console.log('Create records');
-    const model = new this.currentModel({ ...createDto, ref_id: uuid() });
+    const { username, user_id, organization_id } = createDto;
+    const model = new this.currentModel({
+      ...createDto,
+      ref_id: uuid(),
+      created_by: user_id,
+      created_by_name: username,
+      updated_by: user_id,
+      updated_by_name: username,
+      updated_datetime_utc: new Date(),
+      organization_id: organization_id,
+    });
+    // Generate audit
+    const audit = new this.auditModel(generateAudit(model, ''));
+    audit.save();
     return model.save();
   }
 
@@ -57,5 +72,11 @@ export class MasterService<
     console.log(`This action removes a #${ref_id} template`);
     const result = this.currentModel.findOneAndDelete({ ref_id });
     return result;
+  }
+
+  //Audit service
+  async auditAll(filterDto: AuditFilterDto = null): Promise<Audit[]> {
+    console.log(`This action returns all audit records`);
+    if (filterDto == null) return this.auditModel.find({}, { _id: 0, __v: 0 });
   }
 }

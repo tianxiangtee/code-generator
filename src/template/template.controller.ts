@@ -6,11 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { TemplateService } from './template.service';
 import { CreateTemplateDto } from './dto/create-template.dto';
 import { UpdateTemplateDto } from './dto/update-template.dto';
-import { ApiHeader } from '@nestjs/swagger';
+import { ApiHeader, ApiParam } from '@nestjs/swagger';
+import { AuditFilterTemplateDto } from './audit/dto/filter-template.dto';
 
 @ApiHeader({
   name: 'servicekey',
@@ -20,6 +22,16 @@ import { ApiHeader } from '@nestjs/swagger';
 @Controller('template')
 export class TemplateController {
   constructor(private readonly templateService: TemplateService) {}
+
+  @Get(':header_ref_id/audit')
+  @ApiParam({
+    name: 'header_ref_id',
+    description: 'Template ref id',
+    type: 'string',
+  })
+  auditAll(@Query() query: AuditFilterTemplateDto){
+    return this.templateService.auditAll(query);
+  }
 
   @Post()
   create(@Body() createTemplateDto: CreateTemplateDto) {

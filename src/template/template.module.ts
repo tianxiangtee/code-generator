@@ -3,6 +3,7 @@ import { TemplateService } from './template.service';
 import { TemplateController } from './template.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Template, TemplateSchema } from './entities/template.entity';
+import { TemplateAudit, TemplateAuditSchema } from './audit/entities/template.entity';
 
 @Module({
   imports: [
@@ -10,6 +11,12 @@ import { Template, TemplateSchema } from './entities/template.entity';
       {
         name: Template.name,
         useFactory: () => factoryFunction(),
+      },
+      {
+        name: TemplateAudit.name,
+        useFactory: () => {
+          return TemplateAuditSchema;
+        },
       },
     ]),
   ],
