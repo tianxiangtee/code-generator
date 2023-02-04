@@ -12,7 +12,7 @@ export class CommonFilterDto {
   @ApiProperty({ required: false })
   offset: number;
   @ApiProperty({ required: false })
-  sort_by: string;
+  sortBy: string;
   @ApiProperty({ required: false })
-  sort_order: string;
+  sortDirection: string;
 }

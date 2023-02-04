@@ -13,6 +13,7 @@ import { CreateTemplateDto } from './dto/create-template.dto';
 import { UpdateTemplateDto } from './dto/update-template.dto';
 import { ApiHeader, ApiParam } from '@nestjs/swagger';
 import { AuditFilterTemplateDto } from './audit/dto/filter-template.dto';
+import { FilterTemplateDto } from './dto/filter-template.dto';
 
 @ApiHeader({
   name: 'servicekey',
@@ -29,8 +30,26 @@ export class TemplateController {
     description: 'Template ref id',
     type: 'string',
   })
-  auditAll(@Query() query: AuditFilterTemplateDto){
+  auditAll(
+    @Param('header_ref_id') headerRefId: string,
+    @Query() query: AuditFilterTemplateDto,
+  ) {
+    query.header_ref_id = headerRefId;
     return this.templateService.auditAll(query);
+  }
+
+  @Get(':header_ref_id/audit/count')
+  @ApiParam({
+    name: 'header_ref_id',
+    description: 'Template ref id',
+    type: 'string',
+  })
+  auditAllCount(
+    @Param('header_ref_id') headerRefId: string,
+    @Query() query: AuditFilterTemplateDto,
+  ) {
+    query.header_ref_id = headerRefId;
+    return this.templateService.countFilteredAudit(query);
   }
 
   @Post()
@@ -39,13 +58,14 @@ export class TemplateController {
   }
 
   @Get()
-  findAll() {
-    return this.templateService.findAll();
+  findAll(@Query() query: FilterTemplateDto) {
+    console.log(query);
+    return this.templateService.findAll(query);
   }
 
   @Get('/count')
-  count() {
-    return this.templateService.count();
+  count(@Query() query: FilterTemplateDto) {
+    return this.templateService.countFiltered(query);
   }
 
   @Get(':ref_id')

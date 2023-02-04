@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
 import { generateAudit, generateUpdateAudit } from './audit/generateAudit';
 import { CommonDto, CommonFilterDto } from './constant/common-dto';
+
 @Injectable()
 export class MasterService<
   Model,
@@ -11,18 +12,17 @@ export class MasterService<
   FilterDto extends CommonFilterDto,
   AuditFilterDto extends CommonFilterDto,
 > {
-  constructor(
-    protected currentModel: any,
-    protected auditModel: any,
-    protected advanceFilter: any = null,
-  ) {
+  protected currentModel: any;
+  protected auditModel: any;
+  protected advanceFilter: any;
+
+  constructor(currentModel: any, auditModel: any, advanceFilter: any = null) {
     this.currentModel = currentModel;
     this.auditModel = auditModel;
     this.advanceFilter = advanceFilter;
   }
 
-  create(createDto: CreateDto): Promise<Model> {
-    console.log('Create records');
+  async create(createDto: CreateDto): Promise<Model> {
     const { username, user_id, organization_id } = createDto;
     const model = new this.currentModel({
       ...createDto,
@@ -32,61 +32,103 @@ export class MasterService<
       updated_by: user_id,
       updated_by_name: username,
       updated_datetime_utc: new Date(),
-      organization_id: organization_id,
+      organization_id,
     });
-    // Generate audit
     const audit = new this.auditModel(generateAudit(model, ''));
-    audit.save();
-    return model.save();
+    await Promise.all([model.save(), audit.save()]);
+    return model;
   }
 
+  // async findAll(filterDto: FilterDto = null): Promise<Model[]> {
+  //   const filter = filterDto || {};
+  //   return this.currentModel.find(filter, { _id: 0, __v: 0 }).lean();
+  // }
   async findAll(filterDto: FilterDto = null): Promise<Model[]> {
-    console.log(`This action returns all template`);
-    if (filterDto == null)
-      return this.currentModel.find({}, { _id: 0, __v: 0 }).lean();
+    const filter = filterDto || {};
+    let query = this.currentModel.find(filter, { _id: 0, __v: 0 }).lean();
+
+    if (filterDto.offset) {
+      query = query.skip(filterDto.offset);
+    }
+
+    if (filterDto.limit) {
+      query = query.limit(filterDto.limit);
+    }
+
+    if (filterDto.sortBy && filterDto.sortDirection) {
+      const sort = {};
+      sort[filterDto.sortBy] = filterDto.sortDirection === 'asc' ? 1 : -1;
+      query = query.sort(sort);
+    }
+
+    return query.exec();
   }
 
-  async count(filterDto: FilterDto = null): Promise<Model[]> {
-    console.log(`This action count all template`);
-    if (filterDto == null) return this.currentModel.count();
+  async countFiltered(filterDto: FilterDto = null): Promise<number> {
+    const filter = filterDto || {};
+    const count = await this.currentModel.countDocuments(filter);
+    const { limit = 0, offset = 0 } = filterDto || {};
+    return limit ? Math.min(count - offset, limit) : count - offset;
   }
 
-  async findOne(ref_id: string) {
-    console.log(`This action returns a #${ref_id} template`);
+  async findOne(ref_id: string): Promise<Model> {
     const record = await this.currentModel.findOne(
       { ref_id },
       { _id: 0, __v: 0 },
     );
-    if (!record) throw new NotFoundException(ref_id);
+    if (!record)
+      throw new NotFoundException(`Record not found with ref_id: ${ref_id}`);
     return record;
   }
 
-  async update(ref_id: string, UpdateDto: UpdateDto) {
-    console.log(`This action updates a #${ref_id} template`);
+  async update(ref_id: string, updateDto: UpdateDto): Promise<Model> {
     let model = await this.currentModel.findOne({ ref_id });
-    if (!model) throw new NotFoundException('Record not found');
-    const updatedModel = Object.assign({}, model._doc, UpdateDto);
+    if (!model)
+      throw new NotFoundException(`Record not found with ref_id: ${ref_id}`);
+    const updatedModel = Object.assign({}, model._doc, updateDto);
     const auditResult = generateUpdateAudit(model, updatedModel);
     if (auditResult.changes.length > 0) {
       const audit = new this.auditModel(auditResult);
-      audit.save();
-      model = Object.assign(model, UpdateDto);
+      await audit.save();
+      model = Object.assign(model, updateDto);
       model.updated_by = updatedModel.updated_by;
       model.updated_by_name = updatedModel.updated_by_name;
       model.updated_datetime_utc = updatedModel.updated_datetime_utc;
     }
-    return model.save();
+    await model.save();
+    return model;
   }
 
-  remove(ref_id: string) {
-    console.log(`This action removes a #${ref_id} template`);
-    const result = this.currentModel.findOneAndDelete({ ref_id });
-    return result;
+  async remove(ref_id: string): Promise<void> {
+    const result = await this.currentModel.findOneAndDelete({ ref_id });
+    if (!result)
+      throw new NotFoundException(`Record not found with ref_id: ${ref_id}`);
   }
 
-  //Audit service
   async auditAll(filterDto: AuditFilterDto = null): Promise<Audit[]> {
-    console.log(`This action returns all audit records`);
-    if (filterDto == null) return this.auditModel.find({}, { _id: 0, __v: 0 });
+    const filter = filterDto || {};
+    let query = this.auditModel.find(filter, { _id: 0, __v: 0 }).lean();
+
+    if (filterDto.offset) {
+      query = query.skip(filterDto.offset);
+    }
+
+    if (filterDto.limit) {
+      query = query.limit(filterDto.limit);
+    }
+
+    if (filterDto.sortBy && filterDto.sortDirection) {
+      const sort = {};
+      sort[filterDto.sortBy] = filterDto.sortDirection === 'asc' ? 1 : -1;
+      query = query.sort(sort);
+    }
+
+    return query.exec();
+  }
+  async countFilteredAudit(filterDto: AuditFilterDto = null): Promise<number> {
+    const filter = filterDto || {};
+    const count = await this.auditModel.countDocuments(filter);
+    const { limit = 0, offset = 0 } = filterDto || {};
+    return limit ? Math.min(count - offset, limit) : count - offset;
   }
 }
