@@ -46,6 +46,7 @@ export class MasterService<
   async findAll(filterDto: FilterDto = null): Promise<Model[]> {
     const filter = filterDto || {};
     let query = this.currentModel.find(filter, { _id: 0, __v: 0 }).lean();
+    if (filterDto == null) return query;
 
     if (filterDto.offset) {
       query = query.skip(filterDto.offset);
