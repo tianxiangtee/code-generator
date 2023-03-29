@@ -11,7 +11,7 @@ import {
 import { TemplateService } from './template.service';
 import { CreateTemplateDto } from './dto/create-template.dto';
 import { UpdateTemplateDto } from './dto/update-template.dto';
-import { ApiHeader, ApiParam } from '@nestjs/swagger';
+import { ApiHeader, ApiParam, ApiTags } from '@nestjs/swagger';
 import { AuditFilterTemplateDto } from './audit/dto/filter-template.dto';
 import { FilterTemplateDto } from './dto/filter-template.dto';
 
@@ -20,6 +20,7 @@ import { FilterTemplateDto } from './dto/filter-template.dto';
   description: 'Service Key for API',
   schema: { default: `${process.env.SERVICE_KEY}` },
 })
+@ApiTags('template')
 @Controller('template')
 export class TemplateController {
   constructor(private readonly templateService: TemplateService) {}

@@ -15,8 +15,8 @@ import { TemplateModule } from './template/template.module';
     MongooseModule.forRoot(process.env.MONGO_CONNECTION_STRING),
     TemplateModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  // controllers: [AppController],
+  // providers: [AppService],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
