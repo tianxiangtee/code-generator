@@ -20,6 +20,12 @@ import { FilterTemplateDto } from './dto/filter-template.dto';
   description: 'Service Key for API',
   schema: { default: `${process.env.SERVICE_KEY}` },
 })
+@ApiHeader({ name: 'user_id', description: 'User ID of executions' })
+@ApiHeader({ name: 'username', description: 'User Name of executions' })
+@ApiHeader({
+  name: 'organization_id',
+  description: 'Organization of executions',
+})
 @ApiTags('template')
 @Controller('template')
 export class TemplateController {
@@ -55,6 +61,8 @@ export class TemplateController {
 
   @Post()
   create(@Body() createTemplateDto: CreateTemplateDto) {
+    console.log('createDto', createTemplateDto);
+    return null;
     return this.templateService.create(createTemplateDto);
   }
 

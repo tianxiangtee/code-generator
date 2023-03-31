@@ -34,6 +34,14 @@ export class CommonSchema {
   @ApiProperty()
   @Prop()
   organization_id: string;
+
+  @ApiProperty()
+  @Prop()
+  user_id: string;
+
+  @ApiProperty()
+  @Prop()
+  username: string;
 }
 
 export class AuditSchema extends CommonSchema {
