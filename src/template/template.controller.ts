@@ -62,7 +62,6 @@ export class TemplateController {
   @Post()
   create(@Body() createTemplateDto: CreateTemplateDto) {
     console.log('createDto', createTemplateDto);
-    return null;
     return this.templateService.create(createTemplateDto);
   }
 

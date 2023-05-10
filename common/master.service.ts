@@ -36,6 +36,7 @@ export class MasterService<
     });
     const audit = new this.auditModel(generateAudit(model, ''));
     await Promise.all([model.save(), audit.save()]);
+    console.log('model', model);
     return model;
   }
 
