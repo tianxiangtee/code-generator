@@ -3,10 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { MasterService } from 'common/master.service';
 import { Model } from 'mongoose';
 import { AuditFilterCarDto } from './audit/dto/filter-car.dto';
-import {
-  CarAudit,
-  CarAuditDocument,
-} from './audit/entities/car.entity';
+import { CarAudit, CarAuditDocument } from './audit/entities/car.entity';
 import { CreateCarDto } from './dto/create-car.dto';
 import { FilterCarDto } from './dto/filter-car.dto';
 import { UpdateCarDto } from './dto/update-car.dto';

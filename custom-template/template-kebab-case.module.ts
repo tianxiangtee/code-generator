@@ -1,31 +1,37 @@
 import { Module } from '@nestjs/common';
-import { TemplateService } from './template.service';
-import { TemplateController } from './template.controller';
+import { TemplatePascalService } from './template-kebab-case.service';
+import { TemplatePascalController } from './template-kebab-case.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Template, TemplateSchema } from './entities/template.entity';
-import { TemplateAudit, TemplateAuditSchema } from './audit/entities/template.entity';
+import {
+  TemplatePascal,
+  TemplatePascalSchema,
+} from './entities/template-kebab-case.entity';
+import {
+  TemplatePascalAudit,
+  TemplatePascalAuditSchema,
+} from './audit/entities/template-kebab-case.entity';
 
 @Module({
   imports: [
     MongooseModule.forFeatureAsync([
       {
-        name: Template.name,
+        name: TemplatePascal.name,
         useFactory: () => factoryFunction(),
       },
       {
-        name: TemplateAudit.name,
+        name: TemplatePascalAudit.name,
         useFactory: () => {
-          return TemplateAuditSchema;
+          return TemplatePascalAuditSchema;
         },
       },
     ]),
   ],
-  controllers: [TemplateController],
-  providers: [TemplateService],
+  controllers: [TemplatePascalController],
+  providers: [TemplatePascalService],
 })
-export class TemplateModule {}
+export class TemplatePascalModule {}
 
-function generateAudit(originalValue: any, newValue: Template) {
+function generateAudit(originalValue: any, newValue: TemplatePascal) {
   delete originalValue._id;
   const jsonObject1 = originalValue;
   const jsonObject2 = newValue;
@@ -46,12 +52,12 @@ function generateAudit(originalValue: any, newValue: Template) {
   }
 }
 function factoryFunction() {
-  const schema = TemplateSchema;
+  const schema = TemplatePascalSchema;
   let originalValue = null;
   schema.post('init', function () {
     originalValue = this.toObject();
   });
-  schema.pre<Template>('save', async function () {
+  schema.pre<TemplatePascal>('save', async function () {
     if (originalValue != null) generateAudit(originalValue, this);
   });
   return schema;

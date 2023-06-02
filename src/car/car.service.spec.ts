@@ -32,9 +32,7 @@ describe('CarService', () => {
     }).compile();
 
     carService = moduleRef.get<CarService>(CarService);
-    carModel = moduleRef.get<Model<CarDocument>>(
-      getModelToken(Car.name),
-    );
+    carModel = moduleRef.get<Model<CarDocument>>(getModelToken(Car.name));
   });
 
   describe('findAll', () => {

@@ -82,10 +82,7 @@ export class CarController {
   }
 
   @Patch(':ref_id')
-  update(
-    @Param('ref_id') ref_id: string,
-    @Body() updateCarDto: UpdateCarDto,
-  ) {
+  update(@Param('ref_id') ref_id: string, @Body() updateCarDto: UpdateCarDto) {
     return this.carService.update(ref_id, updateCarDto);
   }
 

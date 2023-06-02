@@ -3,7 +3,10 @@ import { TemplateService } from './template.service';
 import { TemplateController } from './template.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Template, TemplateSchema } from './entities/template.entity';
-import { TemplateAudit, TemplateAuditSchema } from './audit/entities/template.entity';
+import {
+  TemplateAudit,
+  TemplateAuditSchema,
+} from './audit/entities/template.entity';
 
 @Module({
   imports: [
