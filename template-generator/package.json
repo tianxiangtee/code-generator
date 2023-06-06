@@ -1,0 +1,10 @@
+{
+  "name": "template-generator",
+  "version": "1.0.0",
+  "description": "Command-line tool for generating templates",
+  "bin": {
+    "template-generator": "./index.js"
+  },
+  "author": "Tian Xiang Tee",
+  "license": "MIT"
+}
