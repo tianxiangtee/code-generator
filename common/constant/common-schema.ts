@@ -58,3 +58,21 @@ export class AuditSchema extends CommonSchema {
   @Prop()
   faults: s.Types.Mixed[];
 }
+
+export class CommonParentSchema extends CommonSchema {
+  @ApiProperty()
+  @Prop()
+  header_ref_id: string;
+
+  @ApiProperty()
+  @Prop()
+  is_ready_to_submit: boolean;
+
+  @ApiProperty()
+  @Prop()
+  error_fields: string[];
+
+  @ApiProperty()
+  @Prop({ default: 0 })
+  child_count: number;
+}
