@@ -36,7 +36,6 @@ export class MasterService<
     });
     const audit = new this.auditModel(generateAudit(model, ''));
     await Promise.all([model.save(), audit.save()]);
-    console.log('model', model);
     return model;
   }
 
@@ -101,10 +100,11 @@ export class MasterService<
     return model;
   }
 
-  async remove(ref_id: string): Promise<void> {
+  async remove(ref_id: string): Promise<Model> {
     const result = await this.currentModel.findOneAndDelete({ ref_id });
     if (!result)
       throw new NotFoundException(`Record not found with ref_id: ${ref_id}`);
+    return result;
   }
 
   async auditAll(filterDto: AuditFilterDto = null): Promise<Audit[]> {

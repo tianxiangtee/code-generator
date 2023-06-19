@@ -7,6 +7,18 @@ export type ChildDocument = Child & Document;
 @Schema({ collection: 'Child_DB' })
 export class Child extends CommonSchema {
   @ApiProperty()
+  @Prop()
+  header_ref_id: string;
+
+  @ApiProperty()
+  @Prop()
+  is_ready_to_submit: boolean;
+
+  @ApiProperty()
+  @Prop()
+  error_fields: string[];
+
+  @ApiProperty()
   @Prop({ default: 'Child Name' })
   template_name: string;
 }

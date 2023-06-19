@@ -2,14 +2,9 @@ import { Module } from '@nestjs/common';
 import { ChildService } from './child.service';
 import { ChildController } from './child.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import {
-  Child,
-  ChildSchema,
-} from './entities/child.entity';
-import {
-  ChildAudit,
-  ChildAuditSchema,
-} from './audit/entities/child.entity';
+import { Child, ChildSchema } from './entities/child.entity';
+import { ChildAudit, ChildAuditSchema } from './audit/entities/child.entity';
+import { ParentModule } from 'src/Parent/parent.module';
 
 @Module({
   imports: [
@@ -25,6 +20,7 @@ import {
         },
       },
     ]),
+    ParentModule,
   ],
   controllers: [ChildController],
   providers: [ChildService],

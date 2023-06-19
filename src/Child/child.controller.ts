@@ -29,9 +29,7 @@ import { FilterChildDto } from './dto/filter-child.dto';
 @ApiTags('child')
 @Controller('child')
 export class ChildController {
-  constructor(
-    private readonly childService: ChildService,
-  ) {}
+  constructor(private readonly childService: ChildService) {}
 
   @Get(':header_ref_id/audit')
   @ApiParam({
@@ -63,8 +61,7 @@ export class ChildController {
 
   @Post()
   create(@Body() createChildDto: CreateChildDto) {
-    console.log('createDto', createChildDto);
-    return this.childService.create(createChildDto);
+    return this.childService.child_create(createChildDto);
   }
 
   @Get()
@@ -88,14 +85,11 @@ export class ChildController {
     @Param('ref_id') ref_id: string,
     @Body() updateChildDto: UpdateChildDto,
   ) {
-    return this.childService.update(
-      ref_id,
-      updateChildDto,
-    );
+    return this.childService.child_update(ref_id, updateChildDto);
   }
 
   @Delete(':ref_id')
   remove(@Param('ref_id') ref_id: string) {
-    return this.childService.remove(ref_id);
+    return this.childService.child_remove(ref_id);
   }
 }
