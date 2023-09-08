@@ -128,7 +128,7 @@ export class ParentChildMasterService<
 
   // Update a child and update the parent's child count and perform validation
   async child_update(ref_id: string, updateDto: UpdateDto): Promise<Model> {
-    updateDto.is_ready_to_submit = updateDto.error_fields.length > 0;
+    updateDto.is_ready_to_submit = updateDto.error_fields && updateDto.error_fields.length > 0 ? false: true;
     // const model = await this.update(ref_id, updateDto);
     let model = await this.currentModel.findOne({ ref_id });
     if (!model)
@@ -138,7 +138,12 @@ export class ParentChildMasterService<
     if (auditResult.changes.length > 0) {
       const audit = new this.auditModel(auditResult);
       await audit.save();
+      model = Object.assign(model, updateDto);
+      model.updated_by = updatedModel.updated_by;
+      model.updated_by_name = updatedModel.updated_by_name;
+      model.updated_datetime_utc = updatedModel.updated_datetime_utc;
     }
+    await model.save();
     // save into parent audit
     auditResult.header_ref_id = model.header_ref_id
     this.parentService.createAudit(auditResult);
