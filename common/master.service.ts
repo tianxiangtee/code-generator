@@ -22,6 +22,11 @@ export class MasterService<
     this.advanceFilter = advanceFilter;
   }
 
+  async createAudit(auditResult:any) {
+    const audit = new this.auditModel(auditResult);
+    await audit.save();
+  }
+
   async create(createDto: CreateDto): Promise<Model> {
     const { username, user_id, organization_id } = createDto;
     const model = new this.currentModel({

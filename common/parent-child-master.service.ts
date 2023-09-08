@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CommonFilterDto, CommonRequestDto } from './constant/common-dto';
 import { MasterService } from './master.service';
 import { CommonParentSchema } from './constant/common-schema';
+import { generateUpdateAudit } from './audit/generateAudit';
 
 @Injectable()
 export class ParentChildMasterService<
@@ -128,7 +129,19 @@ export class ParentChildMasterService<
   // Update a child and update the parent's child count and perform validation
   async child_update(ref_id: string, updateDto: UpdateDto): Promise<Model> {
     updateDto.is_ready_to_submit = updateDto.error_fields.length > 0;
-    const model = await this.update(ref_id, updateDto);
+    // const model = await this.update(ref_id, updateDto);
+    let model = await this.currentModel.findOne({ ref_id });
+    if (!model)
+      throw new NotFoundException(`Record not found with ref_id: ${ref_id}`);
+    const updatedModel = Object.assign({}, model._doc, updateDto);
+    const auditResult = generateUpdateAudit(model, updatedModel);
+    if (auditResult.changes.length > 0) {
+      const audit = new this.auditModel(auditResult);
+      await audit.save();
+    }
+    // save into parent audit
+    auditResult.header_ref_id = model.header_ref_id
+    this.parentService.createAudit(auditResult);
     this.parentService.updateChildCountAndValidate(
       model.header_ref_id,
       0,
