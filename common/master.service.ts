@@ -87,23 +87,28 @@ export class MasterService<
     return record;
   }
 
-  async update(ref_id: string, updateDto: UpdateDto): Promise<Model> {
-    let model = await this.currentModel.findOne({ ref_id });
-    if (!model)
+  async update(ref_id: string, updateDto: UpdateDto, skipAudit: boolean = false): Promise<Model> {
+    const model = await this.currentModel.findOneAndUpdate(
+      { ref_id },
+      { $set: updateDto }, // Use $set to update specific fields
+      { new: true },
+    );
+  
+    if (!model) {
       throw new NotFoundException(`Record not found with ref_id: ${ref_id}`);
-    const updatedModel = Object.assign({}, model._doc, updateDto);
+    }
+  
+    const updatedModel = model.toObject(); // Convert to plain JavaScript object
     const auditResult = generateUpdateAudit(model, updatedModel);
-    if (auditResult.changes.length > 0) {
+  
+    if (auditResult.changes.length > 0 && !skipAudit) {
       const audit = new this.auditModel(auditResult);
       await audit.save();
-      model = Object.assign(model, updateDto);
-      model.updated_by = updatedModel.updated_by;
-      model.updated_by_name = updatedModel.updated_by_name;
-      model.updated_datetime_utc = updatedModel.updated_datetime_utc;
     }
-    await model.save();
+  
     return model;
   }
+  
 
   async remove(ref_id: string): Promise<Model> {
     const result = await this.currentModel.findOneAndDelete({ ref_id });

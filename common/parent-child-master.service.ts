@@ -2,7 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CommonFilterDto, CommonRequestDto } from './constant/common-dto';
 import { MasterService } from './master.service';
 import { CommonParentSchema } from './constant/common-schema';
-import { generateUpdateAudit } from './audit/generateAudit';
+import { generateAudit, generateUpdateAudit } from './audit/generateAudit';
+import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class ParentChildMasterService<
@@ -99,12 +100,31 @@ export class ParentChildMasterService<
 
     updateDto.is_ready_to_submit = !(updateDto.error_fields.length > 0);
 
-    await this.update(parentId, updateDto);
+    await this.update(parentId, updateDto, true);
   }
 
   // Create a child and update the parent's child count and perform validation
   async child_create(createDto: CreateDto): Promise<Model> {
-    const model = await this.create(createDto);
+    //const model = await this.create(createDto);
+    const { username, user_id, organization_id } = createDto;
+    const model = new this.currentModel({
+      ...createDto,
+      ref_id: uuid(),
+      created_by: user_id,
+      created_by_name: username,
+      updated_by: user_id,
+      updated_by_name: username,
+      updated_datetime_utc: new Date(),
+      organization_id,
+    });
+    const auditResult = generateAudit(model, '');
+    const audit = new this.auditModel(auditResult);
+    await Promise.all([model.save(), audit.save()]);
+    //
+    // save into parent audit
+    auditResult.header_ref_id = model.header_ref_id
+    this.parentService.createAudit(auditResult);
+
     await this.parentService.updateChildCountAndValidate(
       model.header_ref_id,
       1,
