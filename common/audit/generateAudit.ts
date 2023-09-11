@@ -10,6 +10,7 @@ export function generateAudit(
   const details = {
     ref_id: model.ref_id,
     clonesource_info: clonesourceInfo,
+    model
   };
 
   const actionType =
@@ -38,6 +39,33 @@ export function generateAudit(
               new_value: model.ref_id,
             },
           ],
+    action_type: actionType,
+  };
+}
+
+export function generateDeleteAudit(
+  model,
+  modelName
+) {
+  const details = {
+    ref_id: model.ref_id,
+    model
+  };
+
+  const actionType = ACTION_TYPE.DELETE
+  return {
+    ref_id: uuid(),
+    created_by: model.updated_by,
+    created_by_name: model.updated_by_name,
+    modified_by: model.updated_by,
+    modified_by_name: model.updated_by_name,
+    organization_id: model.organization_id,
+    user_id: model.user_id,
+    username: model.username,
+    faults: model.faults || [],
+    module: modelName || model.collection.name,
+    details,
+    header_ref_id: model.header_ref_id || model.ref_id,
     action_type: actionType,
   };
 }

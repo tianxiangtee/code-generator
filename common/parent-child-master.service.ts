@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CommonFilterDto, CommonRequestDto } from './constant/common-dto';
 import { MasterService } from './master.service';
 import { CommonParentSchema } from './constant/common-schema';
-import { generateAudit, generateUpdateAudit } from './audit/generateAudit';
+import { generateAudit, generateDeleteAudit, generateUpdateAudit } from './audit/generateAudit';
 import { v4 as uuid } from 'uuid';
 
 @Injectable()
@@ -134,17 +134,30 @@ export class ParentChildMasterService<
     return model;
   }
 
-  // Remove a child and update the parent's child count and perform validation
   async child_remove(ref_id: string): Promise<Model> {
-    const model = await this.remove(ref_id);
+    const model = await this.currentModel.findOneAndDelete({ ref_id });
+  
+    if (!model) {
+      throw new NotFoundException(`Record not found with ref_id: ${ref_id}`);
+    }
+  
+    const auditResult = generateDeleteAudit(model, '');
+    const audit = new this.auditModel(auditResult);
+    await Promise.all([audit.save()]);
+    
+    auditResult.header_ref_id = model.header_ref_id;  
+    this.parentService.createAudit(auditResult);
+  
     await this.parentService.updateChildCountAndValidate(
       model.header_ref_id,
       -1,
       true,
       'invalid_child',
     );
+  
     return model;
   }
+  
 
   // Update a child and update the parent's child count and perform validation
   async child_update(ref_id: string, updateDto: UpdateDto): Promise<Model> {
