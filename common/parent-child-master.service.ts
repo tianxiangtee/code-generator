@@ -13,15 +13,10 @@ export class ParentChildMasterService<
   UpdateDto extends CreateDto,
   FilterDto extends CommonFilterDto,
   AuditFilterDto extends CommonFilterDto,
-  ParentService extends ParentChildMasterService<
-    Model,
-    Audit,
-    CreateDto,
-    UpdateDto,
-    FilterDto,
-    AuditFilterDto,
-    null
-  >,
+  ParentService extends {
+    createAudit(auditResult), 
+    updateChildCountAndValidate(arg0: string, arg1: number, arg2: boolean, arg3: string)
+  } | null = null
 > extends MasterService<
   Model,
   Audit,
@@ -33,7 +28,7 @@ export class ParentChildMasterService<
   constructor(
     protected currentModel: any,
     protected auditModel: any,
-    protected parentService: ParentService,
+    protected parentService: ParentService | null,
   ) {
     super(currentModel, auditModel);
   }

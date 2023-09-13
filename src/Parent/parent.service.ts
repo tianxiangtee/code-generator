@@ -20,8 +20,7 @@ export class ParentService extends ParentChildMasterService<
   CreateParentDto,
   UpdateParentDto,
   FilterParentDto,
-  AuditFilterParentDto,
-  null
+  AuditFilterParentDto
 > {
   constructor(
     @InjectModel(Parent.name)
