@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { ParentService } from './parent.service';
 import { CreateParentDto } from './dto/create-parent.dto';
@@ -70,6 +71,7 @@ export class ParentController {
   @Get()
   findAll(@Query() query: FilterParentDto) {
     console.log(query);
+    throw new UnauthorizedException()
     return this.parentService.findAll(query);
   }
 

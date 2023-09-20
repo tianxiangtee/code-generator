@@ -5,6 +5,8 @@ import { LoginUser } from 'common/middleware/login';
 import { ServiceKeyChecker } from 'common/middleware/servicekey';
 import { ParentModule } from './Parent/parent.module';
 import { ChildModule } from './Child/child.module';
+import { APP_FILTER } from '@nestjs/core';
+import { GlobalExceptionFilter } from 'common/global/globalExceptionFilter';
 
 @Module({
   imports: [
@@ -17,7 +19,10 @@ import { ChildModule } from './Child/child.module';
     ChildModule,
   ],
   // controllers: [AppController],
-  // providers: [AppService],
+  providers: [{
+      provide: APP_FILTER,
+      useClass: GlobalExceptionFilter,
+    }],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
