@@ -7,8 +7,8 @@ import { CreateChildDto } from './dto/create-child.dto';
 import { FilterChildDto } from './dto/filter-child.dto';
 import { UpdateChildDto } from './dto/update-child.dto';
 import { Child, ChildDocument } from './entities/child.entity';
-import { ParentService } from 'src/Parent/parent.service';
 import { ParentChildMasterService } from 'common/parent-child-master.service';
+import { ParentService } from 'src/Parent/parent.service';
 
 @Injectable()
 export class ChildService extends ParentChildMasterService<

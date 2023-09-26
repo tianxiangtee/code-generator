@@ -6,15 +6,26 @@ import {
   ChildDocument,
 } from './entities/child.entity';
 import { ChildService } from './child.service';
+import { ParentService } from '../Parent/parent.service';
+import { ParentModule } from '../Parent/parent.module';
 
 describe('ChildService', () => {
   let childService: ChildService;
+  let parentService: ParentService;
   let ChildModel: Model<ChildDocument>;
+  const mockParentService = {
+    createAudit: jest.fn(),
+    updateChildCountAndValidate: jest.fn(),
+  };
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
       providers: [
         ChildService,
+        {
+          provide: ParentService,
+          useValue: mockParentService,
+        },
         {
           provide: getModelToken(Child.name),
           useValue: {
@@ -37,6 +48,7 @@ describe('ChildService', () => {
     childService = moduleRef.get<ChildService>(
       ChildService,
     );
+    parentService = moduleRef.get(ParentService)
     ChildModel = moduleRef.get<Model<ChildDocument>>(
       getModelToken(Child.name),
     );
