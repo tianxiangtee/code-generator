@@ -1,5 +1,5 @@
+#!/usr/bin/env node
 import inquirer from 'inquirer';
-
 import executeTemplateA from './templateA.js';
 import generateBasicTemplate from './Basic/index.js';
 
