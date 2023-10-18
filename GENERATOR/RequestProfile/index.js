@@ -1,5 +1,8 @@
-const fs = require('fs');
-const path = require('path');
+import { fileURLToPath } from 'url';
+import fs from 'fs'
+import path from 'path'
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const templatePath = path.join(__dirname, 'custom-template');
 const defaultPath = path.join(__dirname, 'src');
