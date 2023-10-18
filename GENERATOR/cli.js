@@ -1,13 +1,13 @@
 import inquirer from 'inquirer';
 
 import executeTemplateA from './templateA.js';
-import executeTemplateB from './templateB.js';
-import executeTemplateC from './templateC.js';
+import generateRequestProfileTemplate from './RequestProfile/index.js';
 
 const templates = [
     { name: 'TemplateA', value: executeTemplateA },
-    { name: 'TemplateB', value: executeTemplateB },
-    { name: 'TemplateC', value: executeTemplateC },
+    { name: 'Basic API', value: executeTemplateA },
+    { name: 'Request Profile API', value: generateRequestProfileTemplate },
+    { name: 'Parent Child API', value: executeTemplateA },
 ];
 
 inquirer
@@ -19,7 +19,28 @@ inquirer
             choices: templates,
         },
     ])
-    .then((answers) => {
+    .then(async (answers) => {
         const selectedTemplate = answers.templateChoice;
-        selectedTemplate();
+        // If the selected template is generateRequestProfileTemplate, ask for additional parameters
+        if (selectedTemplate === generateRequestProfileTemplate) {
+            const params = await inquirer.prompt([
+                {
+                    type: 'input',
+                    name: 'param1',
+                    message: 'Enter param1:',
+                },
+                {
+                    type: 'input',
+                    name: 'param2',
+                    message: 'Enter param2:',
+                },
+                // Add more prompts for additional parameters as needed
+            ]);
+
+            // Call the template function with the provided parameters
+            selectedTemplate(params);
+        } else {
+            // For other templates, simply call the template function
+            selectedTemplate();
+        }
     });
