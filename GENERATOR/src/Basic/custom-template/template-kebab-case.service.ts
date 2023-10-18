@@ -13,7 +13,7 @@ import { UpdateTemplatePascalDto } from './dto/update-template-kebab-case.dto';
 import {
   TemplatePascal,
   TemplatePascalDocument,
-} from './entities/template-kebab-case.entity.ts';
+} from './entities/template-kebab-case.entity';
 
 @Injectable()
 export class TemplatePascalService extends MasterService<

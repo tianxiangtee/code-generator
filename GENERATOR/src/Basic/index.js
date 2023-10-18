@@ -5,8 +5,9 @@ import path from 'path'
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const currentDirectory = process.cwd()
 const templatePath = path.join(__dirname, 'custom-template');
-const defaultPath = path.join(__dirname, 'src');
+const defaultPath = path.join(currentDirectory, 'src/module');
 
 // Variable use camelCase
 function snakeToCamelCase(userInput) {

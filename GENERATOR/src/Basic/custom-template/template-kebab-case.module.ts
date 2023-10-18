@@ -5,7 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import {
   TemplatePascal,
   TemplatePascalSchema,
-} from './entities/template-kebab-case.entity.ts';
+} from './entities/template-kebab-case.entity';
 import {
   TemplatePascalAudit,
   TemplatePascalAuditSchema,

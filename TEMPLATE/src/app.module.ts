@@ -3,7 +3,6 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { LoginUser } from 'common/middleware/login';
 import { ServiceKeyChecker } from 'common/middleware/servicekey';
-import { TemplateModule } from './template/template.module';
 
 @Module({
   imports: [
@@ -12,7 +11,7 @@ import { TemplateModule } from './template/template.module';
       envFilePath: [`.env`],
     }),
     MongooseModule.forRoot(process.env.MONGO_CONNECTION_STRING),
-    TemplateModule,
+    // TemplateModule
   ],
   // controllers: [AppController],
   // providers: [AppService],
