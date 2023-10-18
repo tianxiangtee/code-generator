@@ -1,12 +1,12 @@
 import inquirer from 'inquirer';
 
 import executeTemplateA from './templateA.js';
-import generateRequestProfileTemplate from './RequestProfile/index.js';
+import generateBasicTemplate from './Basic/index.js';
 
 const templates = [
     { name: 'TemplateA', value: executeTemplateA },
-    { name: 'Basic API', value: executeTemplateA },
-    { name: 'Request Profile API', value: generateRequestProfileTemplate },
+    { name: 'Basic API', value: generateBasicTemplate },
+    { name: 'Request Profile API', value: executeTemplateA },
     { name: 'Parent Child API', value: executeTemplateA },
 ];
 
@@ -21,18 +21,18 @@ inquirer
     ])
     .then(async (answers) => {
         const selectedTemplate = answers.templateChoice;
-        // If the selected template is generateRequestProfileTemplate, ask for additional parameters
-        if (selectedTemplate === generateRequestProfileTemplate) {
+        // If the selected template is generateBasicTemplate, ask for additional parameters
+        if (selectedTemplate === generateBasicTemplate) {
             const params = await inquirer.prompt([
                 {
                     type: 'input',
-                    name: 'param1',
-                    message: 'Enter param1:',
+                    name: 'moduleName',
+                    message: 'Enter module name (catModule):',
                 },
                 {
                     type: 'input',
                     name: 'param2',
-                    message: 'Enter param2:',
+                    message: 'Is audit require (Y/N):',
                 },
                 // Add more prompts for additional parameters as needed
             ]);
