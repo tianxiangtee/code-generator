@@ -22,7 +22,7 @@ export class MasterService<
     this.advanceFilter = advanceFilter;
   }
 
-  async create(createDto: CreateDto): Promise<Model> {
+  async create(createDto: CreateDto, skipAudit: boolean = false): Promise<Model> {
     const { username, user_id, organization_id } = createDto;
     const model = new this.currentModel({
       ...createDto,
@@ -34,8 +34,11 @@ export class MasterService<
       updated_datetime_utc: new Date(),
       organization_id,
     });
-    const audit = new this.auditModel(generateAudit(model, ''));
-    await Promise.all([model.save(), audit.save()]);
+
+    if(skipAudit || this.auditModel == null){
+      const audit = new this.auditModel(generateAudit(model, ''));
+      await Promise.all([model.save(), audit.save()]);
+    }
     return model;
   }
 
@@ -82,15 +85,17 @@ export class MasterService<
     return record;
   }
 
-  async update(ref_id: string, updateDto: UpdateDto): Promise<Model> {
+  async update(ref_id: string, updateDto: UpdateDto, skipAudit: boolean = false): Promise<Model> {
     let model = await this.currentModel.findOne({ ref_id });
     if (!model)
       throw new NotFoundException(`Record not found with ref_id: ${ref_id}`);
     const updatedModel = Object.assign({}, model._doc, updateDto);
     const auditResult = generateUpdateAudit(model, updatedModel);
     if (auditResult.changes.length > 0) {
-      const audit = new this.auditModel(auditResult);
-      await audit.save();
+      if(skipAudit || this.auditModel == null){
+        const audit = new this.auditModel(auditResult);
+        await audit.save();
+      }      
       model = Object.assign(model, updateDto);
       model.updated_by = updatedModel.updated_by;
       model.updated_by_name = updatedModel.updated_by_name;
