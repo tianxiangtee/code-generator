@@ -1,12 +1,23 @@
 import fs from 'fs'
 import prettier from 'prettier'
+import path from 'path'
+import { fileURLToPath } from 'url';
 
-function addModule(moduleName) {
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const currentDirectory = process.cwd()
+const defaultPath = path.join(currentDirectory, 'src');
+const appModulePath = path.join(defaultPath, "app.module.ts");
+console.log('appModulePath', appModulePath)
+
+async function addModule(moduleName) {
     // Define the new module name
     const newModuleName = moduleName; // Replace with your desired module name
 
     // Read the content of the app.module.ts file
-    let appModuleContent = fs.readFileSync('src/app.module.ts', 'utf8');
+    let appModuleContent = fs.readFileSync(appModulePath, 'utf8');
 
     // Construct the import statement
     const moduleImportPath = `./module/${newModuleName}/${newModuleName.toLowerCase()}.module`;
@@ -27,10 +38,10 @@ function addModule(moduleName) {
     appModuleContent = importStatement + appModuleContent;
 
     // Reformat the code using Prettier
-    const formattedCode = prettier.format(appModuleContent, { parser: 'typescript' });
+    const formattedCode = await prettier.format(appModuleContent, { parser: 'typescript' });
 
     // Save the updated app.module.ts file
-    fs.writeFileSync('src/app.module.ts', formattedCode, 'utf8');
+    fs.writeFileSync(appModulePath, formattedCode, 'utf8');
 
     console.log('New module added to app.module.ts.');
 
