@@ -2,6 +2,10 @@
 import { fileURLToPath } from 'url';
 import fs from 'fs'
 import path from 'path'
+import addModule from '../Utility/addModule.js';
+
+console.log('basic')
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -89,14 +93,17 @@ function copyFiles(source, target, userInput) {
 
 
 function generateBasicTemplate(userInput) {
-  console.log('request profile template generate', userInput.moduleName)
-  let destinationPath = path.join(defaultPath, snakeToPascalCase(userInput.moduleName));
-  copyFiles(templatePath, destinationPath, userInput.moduleName.trim());
-  renameFiles(
-    destinationPath,
-    destinationPath,
-    snakeToKebabCase(userInput.moduleName.trim()),
-  );
+  // console.log('request profile template generate', userInput.moduleName)
+  // let destinationPath = path.join(defaultPath, snakeToPascalCase(userInput.moduleName));
+  // copyFiles(templatePath, destinationPath, userInput.moduleName.trim());
+  // renameFiles(
+  //   destinationPath,
+  //   destinationPath,
+  //   snakeToKebabCase(userInput.moduleName.trim()),
+  // );
+  console.log('23213131')
+  // addModule(snakeToPascalCase(userInput.moduleName))
+  addModule()
 }
 
 export default generateBasicTemplate;

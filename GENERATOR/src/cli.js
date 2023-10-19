@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import inquirer from 'inquirer';
 import executeTemplateA from './templateA.js';
+console.log('cli')
 import generateBasicTemplate from './Basic/index.js';
 
 const templates = [
