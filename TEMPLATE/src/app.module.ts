@@ -1,8 +1,8 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { MongooseModule } from '@nestjs/mongoose';
-import { LoginUser } from 'common/middleware/login';
-import { ServiceKeyChecker } from 'common/middleware/servicekey';
+import { MiddlewareConsumer, Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
+import { MongooseModule } from "@nestjs/mongoose";
+import { LoginUser } from "common/middleware/login";
+import { ServiceKeyChecker } from "common/middleware/servicekey";
 
 @Module({
   imports: [
@@ -18,6 +18,6 @@ import { ServiceKeyChecker } from 'common/middleware/servicekey';
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(ServiceKeyChecker, LoginUser).forRoutes('*');
+    consumer.apply(ServiceKeyChecker, LoginUser).forRoutes("*");
   }
 }
