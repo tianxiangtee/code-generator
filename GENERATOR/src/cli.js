@@ -28,7 +28,13 @@ inquirer
                 {
                     type: 'input',
                     name: 'moduleName',
-                    message: 'Enter module name (catModule):',
+                    message: 'Enter module name (snake_case):',
+                    validate: function (input) {
+                        if (/^[a-z0-9_]+$/.test(input)) {
+                            return true; // Valid snake_case format
+                        }
+                        return "Please enter a valid snake_case name (lowercase letters, numbers, and underscores)";
+                    },
                 },
                 {
                     type: 'input',

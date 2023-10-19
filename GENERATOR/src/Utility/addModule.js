@@ -2,6 +2,7 @@ import fs from 'fs'
 import prettier from 'prettier'
 import path from 'path'
 import { fileURLToPath } from 'url';
+import { snakeToKebabCase, snakeToPascalCase } from './textTransform.js';
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -14,14 +15,14 @@ console.log('appModulePath', appModulePath)
 
 async function addModule(moduleName) {
     // Define the new module name
-    const newModuleName = moduleName; // Replace with your desired module name
+    const newModuleName = snakeToPascalCase(moduleName); // Replace with your desired module name
 
     // Read the content of the app.module.ts file
     let appModuleContent = fs.readFileSync(appModulePath, 'utf8');
 
     // Construct the import statement
-    const moduleImportPath = `./module/${newModuleName}/${newModuleName.toLowerCase()}.module`;
-    const importStatement = `import { ${newModuleName}Module } from '${moduleImportPath}';\n`;
+    const moduleImportPath = `./module/${newModuleName}/${snakeToKebabCase(moduleName)}.module`;
+    const importStatement = `import { ${ newModuleName}Module } from '${moduleImportPath}';\n`;
 
     // Find the position to insert the new import statement (after MongooseModule and before the comments)
     const mongoosePosition = appModuleContent.indexOf('MongooseModule.forRoot(process.env.MONGO_CONNECTION_STRING)');
