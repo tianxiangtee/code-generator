@@ -35,10 +35,12 @@ export class MasterService<
       organization_id,
     });
 
-    if(skipAudit || this.auditModel == null){
+    if(skipAudit || this.auditModel !== null){
       const audit = new this.auditModel(generateAudit(model, ''));
       await Promise.all([model.save(), audit.save()]);
+      return model
     }
+    await Promise.all([model.save()]);
     return model;
   }
 
@@ -92,7 +94,7 @@ export class MasterService<
     const updatedModel = Object.assign({}, model._doc, updateDto);
     const auditResult = generateUpdateAudit(model, updatedModel);
     if (auditResult.changes.length > 0) {
-      if(skipAudit || this.auditModel == null){
+      if(skipAudit || this.auditModel !== null){
         const audit = new this.auditModel(auditResult);
         await audit.save();
       }      

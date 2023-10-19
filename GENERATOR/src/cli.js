@@ -32,8 +32,15 @@ inquirer
                 },
                 {
                     type: 'input',
-                    name: 'param2',
-                    message: 'Is audit require (Y/N):',
+                    name: 'skipAudit',
+                    message: 'Is audit required (Y/N):',
+                    validate: function (input) {
+                        input = input.trim().toUpperCase(); // Convert input to uppercase and remove leading/trailing spaces
+                        if (input === 'Y' || input === 'N') {
+                            return true; // Valid input
+                        }
+                        return "Please enter 'Y' or 'N'"; // Invalid input, prompt again
+                    },
                 },
                 // Add more prompts for additional parameters as needed
             ]);

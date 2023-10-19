@@ -8,7 +8,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const currentDirectory = process.cwd()
-const templatePath = path.join(__dirname, 'custom-template');
+const template = path.join(__dirname, 'custom-template');
+const templateWithoutAudit = path.join(__dirname, 'custom-template-without-audit');
 const defaultPath = path.join(currentDirectory, 'src/module');
 
 // Variable use camelCase
@@ -91,7 +92,7 @@ function copyFiles(source, target, userInput) {
 
 
 function generateBasicTemplate(userInput) {
-  console.log('request profile template generate', userInput.moduleName)
+  const templatePath = userInput.skipAudit.toUpperCase() == "Y" ? template : templateWithoutAudit
   let destinationPath = path.join(defaultPath, snakeToPascalCase(userInput.moduleName));
   copyFiles(templatePath, destinationPath, userInput.moduleName.trim());
   renameFiles(
