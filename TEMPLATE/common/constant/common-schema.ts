@@ -1,45 +1,45 @@
 import { Prop } from '@nestjs/mongoose';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty } from '@nestjs/swagger';
 import { Schema as s } from 'mongoose';
 
 export class CommonSchema {
-  @ApiProperty()
+  @ApiHideProperty()
   @Prop({ unique: true })
   ref_id: string;
 
-  @ApiProperty()
+  @ApiHideProperty()
   @Prop()
   created_by: string;
 
-  @ApiProperty()
+  @ApiHideProperty()
   @Prop()
   created_by_name: string;
 
-  @ApiProperty()
+  @ApiHideProperty()
   @Prop({ default: new Date() })
   created_datetime_utc: Date;
 
-  @ApiProperty()
+  @ApiHideProperty()
   @Prop()
   updated_by: string;
 
-  @ApiProperty()
+  @ApiHideProperty()
   @Prop()
   updated_by_name: string;
 
-  @ApiProperty()
+  @ApiHideProperty()
   @Prop()
   updated_datetime_utc: Date;
 
-  @ApiProperty()
+  @ApiHideProperty()
   @Prop()
   organization_id: string;
 
-  @ApiProperty()
+  @ApiHideProperty()
   @Prop()
   user_id: string;
 
-  @ApiProperty()
+  @ApiHideProperty()
   @Prop()
   username: string;
 }
