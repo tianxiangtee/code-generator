@@ -15,7 +15,7 @@ const template = path.join(__dirname, 'custom-template');
 const templateWithoutAudit = path.join(__dirname, 'custom-template-without-audit');
 const defaultPath = path.join(currentDirectory, 'src/module');
 
-function generateRequestProfileTemplate(userInput) {
+async function generateRequestProfileTemplate(userInput) {
   const templatePath = userInput.skipAudit.toUpperCase() == "Y" ? template : templateWithoutAudit
   let destinationPath = path.join(defaultPath, snakeToPascalCase(userInput.moduleName));
   copyFiles(templatePath, destinationPath, userInput.moduleName.trim());
@@ -24,7 +24,8 @@ function generateRequestProfileTemplate(userInput) {
     destinationPath,
     snakeToKebabCase(userInput.moduleName.trim()),
   );
-  addModule(userInput.moduleName)
+  await addModule(userInput.moduleName, "Request")
+  await addModule(userInput.moduleName, "Record")
 }
 
 export default generateRequestProfileTemplate;

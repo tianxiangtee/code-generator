@@ -13,15 +13,18 @@ const defaultPath = path.join(currentDirectory, 'src');
 const appModulePath = path.join(defaultPath, "app.module.ts");
 console.log('appModulePath', appModulePath)
 
-async function addModule(moduleName) {
+async function addModule(moduleName, folderPath = null) {
     // Define the new module name
-    const newModuleName = snakeToPascalCase(moduleName); // Replace with your desired module name
+    const folderName = snakeToPascalCase(moduleName); // Replace with your desired module name
+    const newModuleName = folderPath == null? folderName : snakeToPascalCase(moduleName + folderPath); // Replace with your desired module name
+    const moduleFilename = folderPath == null ? snakeToKebabCase(moduleName): snakeToKebabCase(moduleName) + "-" + folderPath.toLowerCase()
+    const folderPathStr = folderPath == null ? "" :folderPath.toLowerCase()+ "/" 
 
     // Read the content of the app.module.ts file
     let appModuleContent = fs.readFileSync(appModulePath, 'utf8');
 
     // Construct the import statement
-    const moduleImportPath = `./module/${newModuleName}/${snakeToKebabCase(moduleName)}.module`;
+    const moduleImportPath = `./module/${folderName}/${folderPathStr}${moduleFilename}.module`;
     const importStatement = `import { ${ newModuleName}Module } from '${moduleImportPath}';\n`;
 
     // Find the position to insert the new import statement (after MongooseModule and before the comments)
