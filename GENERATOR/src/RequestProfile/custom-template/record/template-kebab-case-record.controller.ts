@@ -12,6 +12,7 @@ import {
   import { CreateTemplatePascalRecordDto } from './dto/create-template-kebab-case-record.dto';
   import { UpdateTemplatePascalRecordDto } from './dto/update-template-kebab-case-record.dto';
   import { ApiHeader, ApiParam, ApiTags } from '@nestjs/swagger';
+  import { AuditFilterTemplatePascalRecordDto } from './audit/dto/filter-template-kebab-case-record.dto';
   import { FilterTemplatePascalRecordDto } from './dto/filter-template-kebab-case-record.dto';
   
   @ApiHeader({
@@ -31,6 +32,20 @@ import {
     constructor(
       private readonly templateCamelCaseRecordService: TemplatePascalRecordService,
     ) {}
+
+    @Get(':header_ref_id/audit')
+    @ApiParam({
+      name: 'header_ref_id',
+      description: 'TemplatePascalPascal ref id',
+      type: 'string',
+    })
+    auditAll(
+      @Param('header_ref_id') headerRefId: string,
+      @Query() query: AuditFilterTemplatePascalRecordDto,
+    ) {
+      query.header_ref_id = headerRefId;
+      return this.templateCamelCaseRecordService.auditAll(query);
+    }
     
     @Post()
     create(@Body() createTemplatePascalRecordDto: CreateTemplatePascalRecordDto) {

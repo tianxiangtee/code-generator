@@ -6,6 +6,10 @@ import {
   TemplatePascalRecord,
   TemplatePascalRecordSchema,
 } from './entities/template-kebab-case-record.entity';
+import {
+  TemplatePascalRecordAudit,
+  TemplatePascalRecordAuditSchema,
+} from './audit/entities/template-kebab-case-record.entity';
 
 @Module({
   imports: [
@@ -13,6 +17,12 @@ import {
       {
         name: TemplatePascalRecord.name,
         useFactory: () => factoryFunction(),
+      },
+      {
+        name: TemplatePascalRecordAudit.name,
+        useFactory: () => {
+          return TemplatePascalRecordAuditSchema;
+        },
       },
     ]),
   ],
