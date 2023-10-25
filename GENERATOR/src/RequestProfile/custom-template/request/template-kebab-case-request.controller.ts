@@ -12,6 +12,7 @@ import {
   import { CreateTemplatePascalRequestDto } from './dto/create-template-kebab-case-request.dto';
   import { UpdateTemplatePascalRequestDto } from './dto/update-template-kebab-case-request.dto';
   import { ApiHeader, ApiParam, ApiTags } from '@nestjs/swagger';
+  import { AuditFilterTemplatePascalRequestDto } from './audit/dto/filter-template-kebab-case-request.dto';
   import { FilterTemplatePascalRequestDto } from './dto/filter-template-kebab-case-request.dto';
   
   @ApiHeader({
@@ -31,6 +32,34 @@ import {
     constructor(
       private readonly templateCamelCaseRequestService: TemplatePascalRequestService,
     ) {}
+
+    @Get(':header_ref_id/audit')
+    @ApiParam({
+      name: 'header_ref_id',
+      description: 'TemplatePascalPascal ref id',
+      type: 'string',
+    })
+    auditAll(
+      @Param('header_ref_id') headerRefId: string,
+      @Query() query: AuditFilterTemplatePascalRequestDto,
+    ) {
+      query.header_ref_id = headerRefId;
+      return this.templateCamelCaseRequestService.auditAll(query);
+    }
+  
+    @Get(':header_ref_id/audit/count')
+    @ApiParam({
+      name: 'header_ref_id',
+      description: 'TemplatePascalPascal ref id',
+      type: 'string',
+    })
+    auditAllCount(
+      @Param('header_ref_id') headerRefId: string,
+      @Query() query: AuditFilterTemplatePascalRequestDto,
+    ) {
+      query.header_ref_id = headerRefId;
+      return this.templateCamelCaseRequestService.countFilteredAudit(query);
+    }
   
     @Post()
     create(@Body() createTemplatePascalRequestDto: CreateTemplatePascalRequestDto) {

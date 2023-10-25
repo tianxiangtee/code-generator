@@ -6,6 +6,10 @@ import {
   TemplatePascalRequest,
   TemplatePascalRequestSchema,
 } from './entities/template-kebab-case-request.entity';
+import {
+  TemplatePascalRequestAudit,
+  TemplatePascalRequestAuditSchema,
+} from './audit/entities/template-kebab-case-request.entity';
 
 @Module({
   imports: [
@@ -13,6 +17,12 @@ import {
       {
         name: TemplatePascalRequest.name,
         useFactory: () => factoryFunction(),
+      },
+      {
+        name: TemplatePascalRequestAudit.name,
+        useFactory: () => {
+          return TemplatePascalRequestAuditSchema;
+        },
       },
     ]),
   ],
