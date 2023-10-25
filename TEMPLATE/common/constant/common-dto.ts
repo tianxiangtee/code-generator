@@ -6,6 +6,15 @@ export class CommonDto {
   organization_id: string;
 }
 
+export class CommonRequestDto extends CommonDto {
+  @ApiProperty()
+  header_ref_id: string;
+  @ApiProperty({ default: false })
+  is_ready_to_submit: boolean;
+  @ApiProperty()
+  error_fields: string[];
+}
+
 export class CommonFilterDto {
   @ApiProperty({ required: false })
   limit: number;
