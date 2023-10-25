@@ -22,6 +22,11 @@ export class MasterService<
     this.advanceFilter = advanceFilter;
   }
 
+  async createAudit(auditResult:any) {
+    const audit = new this.auditModel(auditResult);
+    await audit.save();
+  }
+
   async create(createDto: CreateDto, skipAudit: boolean = false): Promise<Model> {
     const { username, user_id, organization_id } = createDto;
     const model = new this.currentModel({
@@ -105,12 +110,13 @@ export class MasterService<
     }
     await model.save();
     return model;
-  }
+  }  
 
-  async remove(ref_id: string): Promise<void> {
+  async remove(ref_id: string): Promise<Model> {
     const result = await this.currentModel.findOneAndDelete({ ref_id });
     if (!result)
       throw new NotFoundException(`Record not found with ref_id: ${ref_id}`);
+    return result;
   }
 
   async auditAll(filterDto: AuditFilterDto = null): Promise<Audit[]> {
