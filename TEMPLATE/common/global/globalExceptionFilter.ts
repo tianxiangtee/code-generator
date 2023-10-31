@@ -10,7 +10,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
 
     // Log all error
-    errorLogger.error(exception);
+    errorLogger.error(exception.toString());
     
     if (exception instanceof HttpException) {
       const status = exception.getStatus();
